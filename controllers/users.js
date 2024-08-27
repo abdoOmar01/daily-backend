@@ -12,6 +12,11 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
   const { email, name, password } = request.body
 
+  const isDuplicate = await User.findOne({ email })
+  if (isDuplicate) {
+    return response.status(401).json({ error: "Email already exists" })
+  }
+
   const passwordValidation = checkPasswordStrength(password)
   if (passwordValidation !== true) {
     return response.status(401).json({ error: passwordValidation })
